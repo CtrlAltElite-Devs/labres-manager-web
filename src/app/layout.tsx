@@ -21,7 +21,6 @@ export default function RootLayout({
         className={`${inter.className} antialiased`}
       >
         <AppProvider>{children}</AppProvider>
-        {/* <h1>DARK</h1> */}
       </body>
     </html>
   );

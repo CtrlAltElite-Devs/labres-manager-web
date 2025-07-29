@@ -3,11 +3,16 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { FileText, LogOut, TestTube } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "next/navigation";
 
 export default function AppSidebar() {
   const { clearAuth } = useAuthStore();
-  const handleSignOut = () => {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await fetch("/api/logout", {method: "POST"});
     clearAuth();
+    router.replace("/sign-in");
   }
 
   return (

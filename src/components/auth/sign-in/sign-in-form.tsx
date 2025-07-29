@@ -17,7 +17,7 @@ const pidForm = z.object({
 type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
-    const { mutate, isPending, isSuccess } = useCheckPid();
+    const { mutate, isPending } = useCheckPid();
     const router = useRouter();
     const { setPid } = useAuthStore();
 
@@ -40,12 +40,14 @@ export default function SignInForm(){
                     alert("Invalid PID");
                     return;
                 }
+                
+                setPid(pid)
 
                 if(!hasPassword){
                     router.replace("/register");
+                    return;
                 }
 
-                setPid(pid)
 
                 router.replace("/password");
             }
@@ -61,7 +63,7 @@ export default function SignInForm(){
                 {...register("pid")}
             />
             {!isPending ? (
-                <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full" disabled={!pid || isSuccess} >
+                <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full" disabled={!pid} >
                     Continue
                 </Button>
             ):

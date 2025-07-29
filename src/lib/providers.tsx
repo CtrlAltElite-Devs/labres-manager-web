@@ -12,13 +12,13 @@ export default function AppProvider({ children }: { children: ReactNode }) {
 		<QueryClientProvider client={client}>
 			<ReactQueryStreamedHydration>
 				<ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					{children}
+				</ThemeProvider>
 			</ReactQueryStreamedHydration>
 		</QueryClientProvider>
 	);
