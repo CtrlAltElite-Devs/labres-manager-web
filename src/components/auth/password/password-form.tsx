@@ -52,7 +52,7 @@ export default function PasswordForm() {
             onSuccess: (data) => {
                 console.log("success log in: ", JSON.stringify(data, null, 3));
                 setAuth(data);
-                router.replace("/dashboard");
+                window.location.href = "/dashboard"
             }
         })
     };

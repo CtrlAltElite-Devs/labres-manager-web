@@ -5,29 +5,37 @@ import { Search } from "lucide-react"
 import { Table, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Input } from "../ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { generateDummyResults } from "@/utils/generate-dummy-results"
+// import { generateDummyResults } from "@/utils/generate-dummy-results"
 import LabResultsTableBody from "./lab-results-table-body"
 import type { LabResult } from "@/types"
 import { PaginationControls } from "./pagination-controls"
+import { useGetResults } from "@/services/result/get-results"
 
 export default function LabResultsTable() {
-  const [dummyResults, setDummyResults] = useState<LabResult[]>([])
+  const [results, setResults] = useState<LabResult[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const { data, refetch } = useGetResults();
   const resultsPerPage = 10
 
   useEffect(() => {
-    setDummyResults(generateDummyResults("USERPID"))
-  }, [])
+    refetch()
+  }, [refetch])
+
+  useEffect(() => {
+    if(data){
+      setResults(data);
+    }
+  }, [data])
 
   const filteredResults = useMemo(() => {
-    if (!searchTerm.trim()) return dummyResults
+    if (!searchTerm.trim()) return results
 
-    return dummyResults.filter(
+    return results.filter(
       (result) =>
         result.testName.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  }, [dummyResults, searchTerm])
+  }, [results, searchTerm])
 
   // Reset to first page when search changes
   useEffect(() => {
@@ -37,6 +45,7 @@ export default function LabResultsTable() {
   const totalPages = Math.ceil(filteredResults.length / resultsPerPage)
   const startIndex = (currentPage - 1) * resultsPerPage
   const paginatedResults = filteredResults.slice(startIndex, startIndex + resultsPerPage)
+
 
   return (
     <Card className="border-0 shadow-sm  bg-surface-container-lowest/80">
@@ -54,7 +63,7 @@ export default function LabResultsTable() {
         {searchTerm && (
           <div className="text-sm text-muted-foreground">
             {filteredResults.length} result{filteredResults.length !== 1 ? "s" : ""} found
-            {filteredResults.length !== dummyResults.length && <span> out of {dummyResults.length} total</span>}
+            {filteredResults.length !== results.length && <span> out of {results.length} total</span>}
           </div>
         )}
       </CardHeader>

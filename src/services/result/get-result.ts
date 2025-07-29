@@ -7,7 +7,6 @@ export interface TestResultDto {
 }
 
 const getResult = async (id: string): Promise<TestResultDto> => {
-    console.log("getting result for " + id);
     try {
         const response = await api.get<TestResultDto>(`/api/test-result/${id}`);
         return response.data;
