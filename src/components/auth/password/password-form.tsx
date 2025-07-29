@@ -58,7 +58,7 @@ export default function PasswordForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 min-w-md">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 sm:min-w-md">
             {/* PID (readonly) */}
             <div>
             <Input

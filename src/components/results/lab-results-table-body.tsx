@@ -6,26 +6,21 @@ import { Button } from "../ui/button";
 import { Eye, Droplets, Microscope, Download } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
-import { PdfViewerOverlay } from "./pdf-viewer-overlay";
+// import { PdfViewerOverlay } from "./pdf-viewer-overlay";
+import { usePdfStore } from "@/stores/pdf";
+import { useRouter } from "next/navigation";
 
 interface Props {
   results: LabResult[]
 }
 
 export default function LabResultsTableBody({results}: Props) {
-  const [selectedResult, setSelectedResult] = useState<{ id: string; info: LabResult } | null>(null)
+  const { setSelected } = usePdfStore();
+  const router = useRouter();
 
   const handleViewPdf = (result: LabResult) => {
-    setSelectedResult({ id: result.id, info: result })
-    console.log('viewing: ', JSON.stringify(result, null, 2));
-  }
-
-  const handleClosePdfViewer = () => {
-    setSelectedResult(null)
-  }
-
-  const handleDownload = (resultId: string) => {
-    alert(`Download PDF for result ID: ${resultId}`)
+    setSelected(result);
+    router.push(`dashboard/result/${result.id}`)
   }
 
   return (
@@ -48,13 +43,6 @@ export default function LabResultsTableBody({results}: Props) {
           />
         ))
       )}
-
-       <PdfViewerOverlay
-          isOpen={!!selectedResult}
-          onClose={handleClosePdfViewer}
-          resultId={selectedResult?.id || ""}
-          resultInfo={selectedResult?.info}
-      />
     </TableBody>
   )
 }

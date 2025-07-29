@@ -36,14 +36,6 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
     setError(null)
 
     try {
-      // Replace this with your actual API endpoint
-      // const response = await fetch(`/api/lab-results/${resultId}/pdf`)
-
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch PDF data")
-      // }
-
-      // const data: TestResultDto = await response.json()
       setPdfData({id: resultId, base64Pdf: dummyPdfBase64});
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -172,7 +164,7 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
                 >
                   <iframe
                     src={`data:application/pdf;base64,${pdfData.base64Pdf}`}
-                    className="w-[800px] h-[1000px] border-0"
+                    className="w-screen h-screen border-0"
                     title="Lab Result PDF"
                   />
                 </div>
