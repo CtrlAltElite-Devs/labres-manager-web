@@ -28,7 +28,7 @@ export default function PasswordForm() {
 
     useEffect(() => {
         if(!pid) router.replace("/sign-in");
-    }, [pid])
+    }, [pid, router])
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<PasswordFormData>({
         resolver: zodResolver(passwordForm),

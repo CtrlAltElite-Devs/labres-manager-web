@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdatePassword } from "@/services/auth/update-password";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "next/navigation";
+import LoadingDots from "@/components/ui/loading-animation";
 
 // Define schema
 const createPasswordForm = z
@@ -24,14 +28,17 @@ type CreatePasswordFormData = z.infer<typeof createPasswordForm>;
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate, isPending } = useUpdatePassword();
+  const { pid } = useAuthStore();
+  const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<CreatePasswordFormData>({
+  useEffect(() => {
+    if(!pid) router.replace("/sign-in");
+  }, [pid, router]);
+
+  const { register, handleSubmit, formState: { errors, isValid }, } = useForm<CreatePasswordFormData>({
     resolver: zodResolver(createPasswordForm),
-    mode: "onChange", // makes `isValid` update in real-time
+    mode: "onChange",
     defaultValues: {
       password: "",
       confirmPassword: "",
@@ -40,6 +47,14 @@ export default function RegisterForm() {
 
   const onSubmit = (data: CreatePasswordFormData) => {
     console.log("✅ Password set:", data);
+    mutate({
+      pid: pid!,
+      password: data.password
+    }, {
+      onSuccess: () => {
+        router.replace("/password");
+      }
+    })
   };
 
   const toggleShowPassword = () => {
@@ -93,17 +108,23 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      <Button
-        type="submit"
-        disabled={!isValid}
-        className={`h-12 rounded-full px-12 w-full transition-colors ${
-          isValid
-            ? "bg-primary text-on-primary"
-            : "bg-gray-300 text-white cursor-not-allowed"
-        }`}
-      >
-        Continue
-      </Button>
+      {
+        !isPending ? (
+          <Button
+            type="submit"
+            disabled={!isValid}
+            className={`h-12 rounded-full px-12 w-full transition-colors ${
+              isValid
+                ? "bg-primary text-on-primary"
+                : "bg-gray-300 text-white cursor-not-allowed"
+            }`}
+          >
+            Continue
+          </Button>
+        ): (
+          <LoadingDots className="text-on-primary" size="md"/>
+        )
+      }
     </form>
   );
 }
