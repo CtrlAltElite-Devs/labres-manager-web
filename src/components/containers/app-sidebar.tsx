@@ -4,14 +4,19 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupConte
 import { FileText, LogOut, TestTube } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AppSidebar() {
   const { clearAuth } = useAuthStore();
   const router = useRouter();
+  const client = useQueryClient();
 
   const handleSignOut = async () => {
     await fetch("/api/logout", {method: "POST"});
     clearAuth();
+    client.invalidateQueries({
+      queryKey: ["test-results"]
+    })
     router.replace("/sign-in");
   }
 
