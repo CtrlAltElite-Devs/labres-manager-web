@@ -62,7 +62,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="min-w-md w-full mx-auto px-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="sm:min-w-md mx-auto px-2">
 
       <div className="space-y-6 mb-8">
         {/* Password */}
