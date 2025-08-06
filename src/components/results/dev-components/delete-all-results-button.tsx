@@ -35,7 +35,7 @@ export default function DeleteAllResultsButton() {
 
     return (
         <>
-            <Button className="bg-destructive hover:bg-destructive/80 hover:cursor-pointer" onClick={handleClick}>
+            <Button className="text-white bg-destructive hover:bg-destructive/80 hover:cursor-pointer" onClick={handleClick}>
                 Delete all Results
             </Button>
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
