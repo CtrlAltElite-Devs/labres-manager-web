@@ -1,6 +1,7 @@
 import AppSidebar from "@/components/containers/app-sidebar";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <SidebarProvider>
+      <Toaster />
       <AppSidebar />
       <SidebarTrigger />
       <SidebarInset className="mb-4 mt-15 mr-4 ">{children}</SidebarInset>
