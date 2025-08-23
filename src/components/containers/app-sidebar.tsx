@@ -1,5 +1,5 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
-import { FileText, TestTube } from "lucide-react";
+import { FileText, LogOut, TestTube } from "lucide-react";
 import SignOutButton from '../sidebar/sign-out-button';
 
 
@@ -40,7 +40,10 @@ export default function AppSidebar() {
       <SidebarFooter className="bg-surface-container-lowest/80">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SignOutButton/>
+            <SidebarMenuButton>
+              <LogOut className="size-4" />
+              <SignOutButton/>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

@@ -11,5 +11,5 @@ const getResults = (): Promise<LabResult[]> =>
 export const useGetResults = () =>
     useQuery({
         queryKey: ["test-results"],
-        queryFn: () => getResults(),
+        queryFn: () => getResults()
     });

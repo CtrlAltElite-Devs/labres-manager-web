@@ -9,6 +9,7 @@ import { useCheckPidV1 } from "@/services/auth/check-pid/check-pid-v1";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth";
 import LoadingDots from "@/components/ui/loading-animation";
+import { toast } from "sonner";
 
 const pidForm = z.object({
     pid: z.string()
@@ -17,7 +18,7 @@ const pidForm = z.object({
 type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
-    const { mutate, isPending } = useCheckPidV1();
+    const { mutate: checkPid, isPending } = useCheckPidV1();
     const router = useRouter();
     const { setPid } = useAuthStore();
 
@@ -32,12 +33,11 @@ export default function SignInForm(){
     const pid = watch("pid");
 
     const onSubmit = (values: PidFormData ) => {
-        console.log(values);
-        mutate({...values }, {
+        checkPid({...values }, {
             onSuccess: (data) => {
                 const { hasPassword, hasPid, pid } = data;
                 if(!hasPid){
-                    alert("Invalid PID");
+                    toast.error("Patient Identification Not Found")
                     return;
                 }
                 
@@ -48,12 +48,14 @@ export default function SignInForm(){
                     return;
                 }
 
-
+                toast.success("Patient Identification Found");
                 router.replace("/password");
+            },
+            onError: () => {
+                toast.error("Sorry we cannot process your request right now.")
             }
         })
     }
-
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>

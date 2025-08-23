@@ -20,18 +20,16 @@ interface PdfViewerOverlayProps {
 
 export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfViewerOverlayProps) {
   const [pdfData, setPdfData] = useState<TestResultDto | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
-  const { data } = useGetIndividualResult(resultId);
+  const { data, isLoading } = useGetIndividualResult(resultId);
   const client = useQueryClient();
 
 
   useEffect(() => {
     if (data) {
       setPdfData({id: data.id, base64Pdf: data.base64Pdf})
-      setIsLoading(false)
     }
   }, [data])
 
@@ -78,13 +76,13 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden bg-gray-100">
+        <div className="flex-1 overflow-hidden bg-surface">
           {isLoading && (
             <div className="flex h-full items-center justify-center">
-              <Card className="p-8">
+              <Card className="p-8 bg-background">
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-lg font-medium">Loading PDF...</p>
+                  <p className="text-lg font-medium">Loading Test Result...</p>
                   <p className="text-sm text-muted-foreground">Please wait while we fetch your lab result</p>
                 </div>
               </Card>

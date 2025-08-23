@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { useAuthStore } from "@/stores/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 export default function SignOutButton() {
@@ -22,20 +23,18 @@ export default function SignOutButton() {
     const handleContinue = async () => {
         await fetch("/api/logout", {method: "POST"});
         clearAuth();
-        client.invalidateQueries({
-            queryKey: ["test-results"]
-        })
+        client.removeQueries();
+        toast.success("Successfully Logged out");
         router.replace("/sign-in");
     }
 
     return (
         <>
-            <button className="w-full bg-transparent text-left flex gap-2 items-center hover:cursor-pointer hover:bg-accent rounded-md px-2 py-2 text-sm"
+            <div className="w-full bg-transparent text-left flex gap-2 items-center hover:cursor-pointer hover:bg-accent rounded-md px-2 py-2 text-sm"
                 onClick={handleClick}
             >
-                <LogOut className="size-4" />
                 Sign Out
-            </button>
+            </div>
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
