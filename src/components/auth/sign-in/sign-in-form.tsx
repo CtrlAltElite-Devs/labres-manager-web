@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCheckPid } from "@/services/auth/check-pid";
+import { useCheckPidV1 } from "@/services/auth/check-pid/check-pid-v1";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth";
 import LoadingDots from "@/components/ui/loading-animation";
@@ -17,7 +17,7 @@ const pidForm = z.object({
 type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
-    const { mutate, isPending } = useCheckPid();
+    const { mutate, isPending } = useCheckPidV1();
     const router = useRouter();
     const { setPid } = useAuthStore();
 
@@ -63,7 +63,7 @@ export default function SignInForm(){
                 {...register("pid")}
             />
             {!isPending ? (
-                <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full" disabled={!pid} >
+                <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full hover:cursor-pointer" disabled={!pid} >
                     Continue
                 </Button>
             ):

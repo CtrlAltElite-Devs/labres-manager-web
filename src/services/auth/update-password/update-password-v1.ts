@@ -1,6 +1,9 @@
 import { api } from "@/lib/axios";
 import { User } from "@/types"
+import { ApiVersion } from "@/types/api-version";
 import { useMutation } from "@tanstack/react-query";
+
+const VERSION : ApiVersion = "v1";
 
 export type UpdatePasswordDto =  {
     pid: string,
@@ -10,7 +13,7 @@ export type UpdatePasswordDto =  {
 export type UpdatePasswordResponse = User;
 
 const updatePassword = async (payload: UpdatePasswordDto) => {
-    const response = await api.put<UpdatePasswordResponse>("/api/auth/update-user",{
+    const response = await api.put<UpdatePasswordResponse>(`/api/${VERSION}/auth/update-user`,{
         ...payload
     });
 
@@ -19,4 +22,4 @@ const updatePassword = async (payload: UpdatePasswordDto) => {
 
 export const useUpdatePassword = () => useMutation({
     mutationFn: updatePassword
-})
+});

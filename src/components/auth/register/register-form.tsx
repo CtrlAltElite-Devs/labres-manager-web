@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdatePassword } from "@/services/auth/update-password";
+import { useUpdatePassword } from "@/services/auth/update-password/update-password-v1";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";

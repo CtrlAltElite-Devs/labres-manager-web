@@ -17,14 +17,14 @@ export function middleware(request: NextRequest) {
   }
 
   if(isAuthenticationPath(request.nextUrl.pathname) && isLoggedIn){
-    return NextResponse.redirect(new URL("/dashboard", request.url)) ;
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
 function isAuthenticationPath(pathname: string) : boolean{
-    return authRoutes.some(route => pathname.startsWith(route));
+  return authRoutes.some(route => pathname.startsWith(route));
 }
 
 // export const config = {

@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginUser } from "@/services/auth/login-user";
+import { useLoginUser } from "@/services/auth/login-user/login-user-v1";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
@@ -75,6 +75,7 @@ export default function PasswordForm() {
             <Input
                 className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
                 placeholder="Enter your password"
+                autoFocus
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
             />

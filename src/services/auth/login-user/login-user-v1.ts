@@ -2,6 +2,9 @@ import { User } from "@/types"
 import { api } from "@/lib/axios"
 import { useMutation } from "@tanstack/react-query";
 import Cookies from 'js-cookie';
+import { ApiVersion } from "@/types/api-version";
+
+const VERSION : ApiVersion = "v1";
 
 export type LoginDto = {
     pid: string;
@@ -15,7 +18,7 @@ export type LoginResponseDto = {
 
 
 const loginUser = async (payload: LoginDto) => {
-    const response = await api.post<LoginResponseDto>("/api/auth/login", {
+    const response = await api.post<LoginResponseDto>(`/api/${VERSION}/auth/login`, {
         ...payload
     });
 

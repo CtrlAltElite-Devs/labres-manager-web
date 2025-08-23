@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import LabResultsTableBody from "./lab-results-table-body"
 import type { LabResult } from "@/types"
 import { PaginationControls } from "./pagination-controls"
-import { useGetResults } from "@/services/result/get-results"
+import { useGetResults } from "@/services/result/get-results/get-results-v1"
 
 export default function LabResultsTable() {
   const [results, setResults] = useState<LabResult[]>([])

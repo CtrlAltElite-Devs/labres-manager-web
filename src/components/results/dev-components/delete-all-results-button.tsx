@@ -2,7 +2,7 @@
 
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { useDeleteAllResults } from '@/services/result/dev-features/delete-all-results';
+import { useDeleteAllResults } from '@/services/result/dev-features/delete-all-results/delete-all-results-v1';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react'
 import { toast } from 'sonner';
@@ -47,7 +47,7 @@ export default function DeleteAllResultsButton() {
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>
+                        <AlertDialogCancel className="hover:cursor-pointer">
                             Cancel
                         </AlertDialogCancel>
                         <Button 

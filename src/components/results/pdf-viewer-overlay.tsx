@@ -5,7 +5,7 @@ import { X, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 import { Badge } from "../ui/badge"
-import { TestResultDto, useGetIndividualResult } from "@/services/result/get-result"
+import { TestResultDto, useGetIndividualResult } from "@/services/result/get-result/get-result-v1"
 import { LabResult } from "@/types"
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useQueryClient } from "@tanstack/react-query"
@@ -108,9 +108,9 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
 
           {pdfData && !isLoading && !error && (
             <div className="h-full overflow-auto">
-              <div className="flex justify-center">
+              <div className="flex justify-center h-full">
                 <div
-                  className="bg-background shadow-lg rounded-lg overflow-hidden"
+                  className="bg-background shadow-lg rounded-lg overflow-hidden h-full w-full"
                   style={{
                     transform: `scale(${zoom / 100}) rotate(${rotation}deg)`,
                     transformOrigin: "center top",
@@ -119,7 +119,7 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
                 >
                   <iframe
                     src={`data:application/pdf;base64,${pdfData.base64Pdf}`}
-                    className="w-screen h-screen border-0"
+                    className="w-full h-full border-0"
                     title="Lab Result PDF"
                   />
                 </div>
