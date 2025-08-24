@@ -2,9 +2,9 @@ import Axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 
 export const api = Axios.create({
-    // baseURL: "https://slabres.ctr3.org",
+    baseURL: "https://slabres.ctr3.org",
     // baseURL: "https://kfsbqd92-3000.asse.devtunnels.ms",
-    baseURL: "http://localhost:5001",
+    // baseURL: "http://localhost:5001",
     withCredentials: true
 })
 
