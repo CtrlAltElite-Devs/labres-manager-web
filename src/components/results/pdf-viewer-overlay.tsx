@@ -5,7 +5,7 @@ import { X, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 import { Badge } from "../ui/badge"
-import { TestResultDto, useGetIndividualResult } from "@/services/result/get-result"
+import { TestResultDto, useGetIndividualResult } from "@/services/result/get-result/get-result-v1"
 import { LabResult } from "@/types"
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useQueryClient } from "@tanstack/react-query"
@@ -20,18 +20,16 @@ interface PdfViewerOverlayProps {
 
 export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfViewerOverlayProps) {
   const [pdfData, setPdfData] = useState<TestResultDto | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
-  const { data } = useGetIndividualResult(resultId);
+  const { data, isLoading } = useGetIndividualResult(resultId);
   const client = useQueryClient();
 
 
   useEffect(() => {
     if (data) {
       setPdfData({id: data.id, base64Pdf: data.base64Pdf})
-      setIsLoading(false)
     }
   }, [data])
 
@@ -78,13 +76,13 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden bg-gray-100">
+        <div className="flex-1 overflow-hidden bg-surface">
           {isLoading && (
             <div className="flex h-full items-center justify-center">
-              <Card className="p-8">
+              <Card className="p-8 bg-background">
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-lg font-medium">Loading PDF...</p>
+                  <p className="text-lg font-medium">Loading Test Result...</p>
                   <p className="text-sm text-muted-foreground">Please wait while we fetch your lab result</p>
                 </div>
               </Card>
@@ -108,9 +106,9 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
 
           {pdfData && !isLoading && !error && (
             <div className="h-full overflow-auto">
-              <div className="flex justify-center">
+              <div className="flex justify-center h-full">
                 <div
-                  className="bg-background shadow-lg rounded-lg overflow-hidden"
+                  className="bg-background shadow-lg rounded-lg overflow-hidden h-full w-full"
                   style={{
                     transform: `scale(${zoom / 100}) rotate(${rotation}deg)`,
                     transformOrigin: "center top",
@@ -119,7 +117,7 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
                 >
                   <iframe
                     src={`data:application/pdf;base64,${pdfData.base64Pdf}`}
-                    className="w-screen h-screen border-0"
+                    className="w-full h-full border-0"
                     title="Lab Result PDF"
                   />
                 </div>

@@ -8,10 +8,12 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginUser } from "@/services/auth/login-user";
+import { useLoginUser } from "@/services/auth/login-user/login-user-v1";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const passwordForm = z.object({
   pid: z.string().nonempty("PID is required"),
@@ -45,14 +47,22 @@ export default function PasswordForm() {
     };
 
     const onSubmit = (data: PasswordFormData) => {
-        console.log("Form submitted", data);
         mutate({
             ...data
         }, {
             onSuccess: (data) => {
-                console.log("success log in: ", JSON.stringify(data, null, 3));
                 setAuth(data);
-                window.location.href = "/dashboard"
+                router.replace("/dashboard");
+                toast.success("Successfully logged in.");
+            },
+            onError: (error) => {
+                if(error instanceof AxiosError){
+                    if(error.status === 403){
+                        toast.error(`Invalid Credentials`);
+                        return;
+                    }
+                }
+                toast.error("Sorry, we cannot process your request right now.")
             }
         })
     };
@@ -61,36 +71,37 @@ export default function PasswordForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 sm:min-w-md">
             {/* PID (readonly) */}
             <div>
-            <Input
-                className="mb-1 h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full"
-                readOnly
-                disabled
-                {...register("pid")}
-            />
-            {errors.pid && <p className="text-red-500 text-sm">{errors.pid.message}</p>}
+                <Input
+                    className="mb-1 h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full"
+                    readOnly
+                    disabled
+                    {...register("pid")}
+                />
+                {errors.pid && <p className="text-red-500 text-sm">{errors.pid.message}</p>}
             </div>
 
             {/* Password input */}
             <div>
-            <Input
-                className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
-                placeholder="Enter your password"
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                <Input
+                    className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
+                    placeholder="Enter your password"
+                    autoFocus
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                />
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
             {/* Show password checkbox */}
             <div className="flex items-start gap-3 mb-4 ml-2">
-            <Checkbox
-                id="togglePassword"
-                className="text-on-primary border-primary"
-                onCheckedChange={toggleShowPassword}
-            />
-            <Label htmlFor="togglePassword" className="text-gray-600">
-                Show Password
-            </Label>
+                <Checkbox
+                    id="togglePassword"
+                    className="text-on-primary border-primary"
+                    onCheckedChange={toggleShowPassword}
+                />
+                <Label htmlFor="togglePassword" className="text-gray-600">
+                    Show Password
+                </Label>
             </div>
 
             {/* Submit button */}

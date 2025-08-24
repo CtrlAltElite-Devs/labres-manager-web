@@ -2,7 +2,8 @@
 
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { useDeleteAllResults } from '@/services/result/dev-features/delete-all-results';
+import { useDeleteAllResults } from '@/services/result/dev-features/delete-all-results/delete-all-results-v1';
+import { useGlobalStore } from '@/stores/global';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react'
 import { toast } from 'sonner';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 export default function DeleteAllResultsButton() {
     const [isOpen, setIsOpen] = useState(false);
     const { mutate: deleteAll } = useDeleteAllResults();
+    const { hasTestResults } = useGlobalStore();
     const client = useQueryClient();
 
     const handleClick = () => {
@@ -35,7 +37,7 @@ export default function DeleteAllResultsButton() {
 
     return (
         <>
-            <Button className="text-white bg-destructive hover:bg-destructive/80 hover:cursor-pointer" onClick={handleClick}>
+            <Button className="text-white bg-destructive hover:bg-destructive/80 hover:cursor-pointer" onClick={handleClick} disabled={!hasTestResults}>
                 Delete all Results
             </Button>
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -47,7 +49,7 @@ export default function DeleteAllResultsButton() {
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>
+                        <AlertDialogCancel className="hover:cursor-pointer">
                             Cancel
                         </AlertDialogCancel>
                         <Button 

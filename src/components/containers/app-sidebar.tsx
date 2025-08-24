@@ -1,34 +1,15 @@
-"use client";
-
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { FileText, LogOut, TestTube } from "lucide-react";
-import { useAuthStore } from "@/stores/auth";
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import SignOutButton from '../sidebar/sign-out-button';
+
 
 export default function AppSidebar() {
-  const { clearAuth } = useAuthStore();
-  const router = useRouter();
-  const client = useQueryClient();
-
-  const handleSignOut = async () => {
-    await fetch("/api/logout", {method: "POST"});
-    clearAuth();
-    client.invalidateQueries({
-      queryKey: ["test-results"]
-    })
-    router.replace("/sign-in");
-  }
-
   return (
-    <Sidebar variant="sidebar" collapsible="icon" className="">
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader className="bg-surface-container-lowest/80">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              className=""
-            >
+            <SidebarMenuButton size="lg">
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-white">
                 <TestTube className="size-4" />
               </div>
@@ -59,9 +40,9 @@ export default function AppSidebar() {
       <SidebarFooter className="bg-surface-container-lowest/80">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleSignOut} tooltip="Sign Out">
+            <SidebarMenuButton>
               <LogOut className="size-4" />
-              <span>Sign Out</span>
+              <SignOutButton/>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -1,5 +1,8 @@
 import { api } from "@/lib/axios";
+import { ApiVersion } from "@/types/api-version";
 import { useQuery } from "@tanstack/react-query";
+
+const VERSION : ApiVersion = "v1";
 
 export interface TestResultDto {
     id : string;
@@ -8,11 +11,11 @@ export interface TestResultDto {
 
 const getResult = async (id: string): Promise<TestResultDto> => {
     try {
-        const response = await api.get<TestResultDto>(`/api/test-result/${id}`);
+        const response = await api.get<TestResultDto>(`/api/${VERSION}/test-result/${id}`);
         return response.data;
     } catch (error) {
         console.error("Failed to get result:", error);
-        throw error; // re-throw if needed
+        throw error;
     }
 };
 
