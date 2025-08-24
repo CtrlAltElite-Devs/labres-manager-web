@@ -57,7 +57,7 @@ export default function LabResultsTable() {
     <Card className="border-0 shadow-sm  bg-surface-container-lowest/80">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl">Your Lab Results</CardTitle>
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-4">
           <div className="relative max-w-sm grow">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -70,7 +70,7 @@ export default function LabResultsTable() {
           <div>
             <Button className="text-on-primary hover:cursor-pointer" onClick={() => refetch()}>
               <RefreshCwIcon/>
-              <span>Refresh</span>
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
           </div>
         </div>

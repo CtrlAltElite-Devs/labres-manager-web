@@ -55,11 +55,13 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
         {/* Header */}
         <div className="flex items-center justify-between bg-surface border-b px-6 py-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">Lab Result Viewer</h2>
+            <h2 className="hidden md:inline-block text-xs md:text-xl font-semibold">
+              Lab Result Viewer
+            </h2>
             {resultInfo && (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline">{resultInfo.testName}</Badge>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   {new Date(resultInfo.testDate).toLocaleDateString()}
                 </span>
               </div>
@@ -70,7 +72,6 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
             <ModeToggle />
             <Button variant="outline" size="sm" onClick={handleClose}>
               <X className="h-4 w-4" />
-              Close
             </Button>
           </div>
         </div>

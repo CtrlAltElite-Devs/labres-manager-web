@@ -54,7 +54,7 @@ export default function DeleteAllResultsButton() {
                         </AlertDialogCancel>
                         <Button 
                             onClick={handleContinue} 
-                            className="bg-destructive hover:bg-destructive/80 hover:cursor-pointer"
+                            className="text-white bg-destructive hover:bg-destructive/80 hover:cursor-pointer"
                         >
                             Continue
                         </Button>
