@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import Cookies from 'js-cookie';
 import { ApiVersion } from "@/types/api-version";
 
-const VERSION : ApiVersion = "v1";
+const VERSION : ApiVersion = "v2";
 
 export type LoginDto = {
     pid: string;

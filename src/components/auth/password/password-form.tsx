@@ -13,6 +13,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const passwordForm = z.object({
   pid: z.string().nonempty("PID is required"),
@@ -46,17 +47,21 @@ export default function PasswordForm() {
     };
 
     const onSubmit = (data: PasswordFormData) => {
-        console.log("Form submitted", data);
         mutate({
             ...data
         }, {
             onSuccess: (data) => {
                 setAuth(data);
-                // window.location.href = "/dashboard";
                 router.replace("/dashboard");
                 toast.success("Successfully logged in.");
             },
-            onError: () => {
+            onError: (error) => {
+                if(error instanceof AxiosError){
+                    if(error.status === 403){
+                        toast.error(`Invalid Credentials`);
+                        return;
+                    }
+                }
                 toast.error("Sorry, we cannot process your request right now.")
             }
         })
