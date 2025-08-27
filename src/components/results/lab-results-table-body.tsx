@@ -5,8 +5,6 @@ import { TableBody, TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { Eye, Droplets, Microscope, Download } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
-// import { PdfViewerOverlay } from "./pdf-viewer-overlay";
 import { usePdfStore } from "@/stores/pdf";
 import { useRouter } from "next/navigation";
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
@@ -26,6 +25,7 @@ export default function SignOutButton() {
         client.removeQueries();
         toast.success("Successfully Logged out");
         router.replace("/sign-in");
+        router.refresh();
     }
 
     return (
