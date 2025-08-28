@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import { ApiVersion } from "@/types/api-version";
+// import { constructFromSymbol } from "date-fns/constants";
 
 export const api = Axios.create({
     // baseURL: "https://slabres.ctr3.org",
@@ -26,13 +27,27 @@ api.interceptors.response.use(
     async (error) => {
         const VERSION: ApiVersion = "v1";
         const originalRequest = error.config;
-        if (error.response.status === 401) {
+
+        if (originalRequest.url.includes(`/api/${VERSION}/auth/refresh`)) {
+            return Promise.reject(error);
+        }
+
+        if (error.response?.status === 401) {
             try {
-                const response = await api.post(`/api/${VERSION}/auth/refresh?useCookie=true`, {});
-                console.log(response.status);
-                return api(originalRequest);
-            } catch (error) {
-                return Promise.reject(error);
+                const response = await api.post(
+                    `/api/${VERSION}/auth/refresh?useCookie=true`,
+                    {}
+                );
+
+                if (response.status === 200) {
+                    return api(originalRequest);
+                } else {
+                    window.location.replace("/sign-in");
+                    return Promise.reject(error);
+                }
+            } catch (refreshError) {
+                window.location.replace("/sign-in");
+                return Promise.reject(refreshError);
             }
         }
 
