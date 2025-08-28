@@ -36,7 +36,7 @@ export default function PasswordForm() {
         resolver: zodResolver(passwordForm),
             defaultValues: {
                 pid: pid,
-                password: "",
+                password: "User123#",
             },
     });
 

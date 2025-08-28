@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Loader2, AlertCircle } from "lucide-react"
+import { X, Loader2, AlertCircle, RefreshCwIcon } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 import { Badge } from "../ui/badge"
@@ -23,7 +23,7 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
-  const { data, isLoading } = useGetIndividualResult(resultId);
+  const { data, isLoading, refetch, isRefetching } = useGetIndividualResult(resultId);
   const client = useQueryClient();
 
 
@@ -39,6 +39,11 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
     })
   }
 
+  const topBarRefresh = () => {
+    refetch();
+  }
+  
+  
   const handleClose = () => {
     setPdfData(null)
     setError(null)
@@ -70,6 +75,9 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
 
           <div className="flex items-center gap-4">
             <ModeToggle />
+            <Button variant="outline" size="sm" onClick={topBarRefresh}>
+              <RefreshCwIcon className="h-4 w-4" />
+            </Button>
             <Button variant="outline" size="sm" onClick={handleClose}>
               <X className="h-4 w-4" />
             </Button>
@@ -78,7 +86,7 @@ export function PdfViewerOverlay({ isOpen, onClose, resultId, resultInfo }: PdfV
 
         {/* Content */}
         <div className="flex-1 overflow-hidden bg-surface">
-          {isLoading && (
+          {(isLoading || isRefetching) && (
             <div className="flex h-full items-center justify-center">
               <Card className="p-8 bg-background">
                 <div className="flex flex-col items-center gap-4">
