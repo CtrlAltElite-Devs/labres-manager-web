@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginUser } from "@/services/auth/login-user/login-user-v1";
+import { useLoginUser } from "@/services/auth/login-user/login-user-v2";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
