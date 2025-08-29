@@ -12,7 +12,7 @@ export const api = Axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const token =useAuthStore.getState().auth?.token;
+        const token = useAuthStore.getState().auth?.token;
         console.log("token: ", token);
         config.headers.Authorization = `Bearer ${token}`
         return config;
@@ -42,10 +42,12 @@ api.interceptors.response.use(
                 if (response.status === 200) {
                     return api(originalRequest);
                 } else {
+                    useAuthStore.getState().clearAuth();
                     window.location.replace("/sign-in");
                     return Promise.reject(error);
                 }
             } catch (refreshError) {
+                useAuthStore.getState().clearAuth();
                 window.location.replace("/sign-in");
                 return Promise.reject(refreshError);
             }
