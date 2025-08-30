@@ -1,4 +1,4 @@
-import { LoginResponseDto } from '@/services/auth/login-user/login-user-v1';
+import { LoginResponseDto } from '@/services/auth/login-user/login-user-v2';
 import { User } from '@/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
