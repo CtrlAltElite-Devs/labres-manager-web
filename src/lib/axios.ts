@@ -4,9 +4,9 @@ import { ApiVersion } from "@/types/api-version";
 // import { constructFromSymbol } from "date-fns/constants";
 
 export const api = Axios.create({
-    // baseURL: "https://slabres.ctr3.org",
+    baseURL: "https://slabres.ctr3.org",
     // baseURL: "https://kfsbqd92-3000.asse.devtunnels.ms",
-    baseURL: "http://localhost:5001",
+    // baseURL: "http://localhost:5001",
     withCredentials: true
 })
 
