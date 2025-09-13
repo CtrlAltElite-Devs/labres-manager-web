@@ -4,9 +4,9 @@ import { ApiVersion } from "@/types/api-version";
 // import { constructFromSymbol } from "date-fns/constants";
 
 export const api = Axios.create({
-    baseURL: "https://slabres.ctr3.org",
+    // baseURL: "https://slabres.ctr3.org",
     // baseURL: "https://kfsbqd92-3000.asse.devtunnels.ms",
-    // baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:5001",
     withCredentials: true
 })
 
@@ -39,8 +39,9 @@ api.interceptors.response.use(
                     {}
                 );
 
-                if (response.status === 200) {
-                    return api(originalRequest);
+                if (response.status === 201) {
+                    const originalResponse = await api(originalRequest);
+                    return originalResponse;
                 } else {
                     useAuthStore.getState().clearAuth();
                     window.location.replace("/sign-in");

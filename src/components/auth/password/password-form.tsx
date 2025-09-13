@@ -46,9 +46,9 @@ export default function PasswordForm() {
         setShowPassword((prev) => !prev);
     };
 
-    const onSubmit = (data: PasswordFormData) => {
+    const onSubmit = (payload: PasswordFormData) => {
         mutate({
-            ...data
+            ...payload
         }, {
             onSuccess: (data) => {
                 setAuth(data);
