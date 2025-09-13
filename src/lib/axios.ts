@@ -1,7 +1,6 @@
 import Axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import { ApiVersion } from "@/types/api-version";
-// import { constructFromSymbol } from "date-fns/constants";
 
 export const api = Axios.create({
     baseURL: "https://slabres.ctr3.org",
@@ -39,8 +38,9 @@ api.interceptors.response.use(
                     {}
                 );
 
-                if (response.status === 200) {
-                    return api(originalRequest);
+                if (response.status === 201) {
+                    const originalResponse = await api(originalRequest);
+                    return originalResponse;
                 } else {
                     useAuthStore.getState().clearAuth();
                     window.location.replace("/sign-in");

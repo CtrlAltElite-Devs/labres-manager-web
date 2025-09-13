@@ -26,7 +26,3 @@ export function middleware(request: NextRequest) {
 function isAuthenticationPath(pathname: string) : boolean{
   return authRoutes.some(route => pathname.startsWith(route));
 }
-
-// export const config = {
-//   matcher: ['/dashboard/:path*', ...authRoutes ],
-// };

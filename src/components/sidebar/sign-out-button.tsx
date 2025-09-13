@@ -7,11 +7,13 @@ import { useAuthStore } from "@/stores/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useLogOut } from "@/services/auth/logout-user/logout-user-v1";
 
 
 export default function SignOutButton() {
     const [isOpen, setIsOpen] = useState(false);
     const { clearAuth } = useAuthStore();
+    const { mutate } = useLogOut();
     const router = useRouter();
     const client = useQueryClient();
 
@@ -20,12 +22,16 @@ export default function SignOutButton() {
     }
 
     const handleContinue = async () => {
-        await fetch("/api/logout", {method: "POST"});
-        clearAuth();
-        client.removeQueries();
-        toast.success("Successfully Logged out");
-        router.replace("/sign-in");
-        router.refresh();
+        // await fetch("/api/logout", {method: "POST"});
+        mutate(undefined, {
+            onSettled: () => {
+                clearAuth();
+                client.removeQueries();
+                toast.success("Successfully Logged out");
+                router.replace("/sign-in");
+                router.refresh();
+            }
+        })
     }
 
     return (
