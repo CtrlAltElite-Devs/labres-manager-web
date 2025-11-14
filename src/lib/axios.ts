@@ -3,9 +3,9 @@ import { useAuthStore } from "@/stores/auth";
 import { ApiVersion } from "@/types/api-version";
 
 export const api = Axios.create({
-    baseURL: "https://slabres.ctr3.org",
+    // baseURL: "https://slabres.ctr3.org",
     // baseURL: "https://kfsbqd92-3000.asse.devtunnels.ms",
-    // baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:5030",
     withCredentials: true
 })
 

@@ -13,10 +13,10 @@ export type UpdatePasswordDto =  {
 export type UpdatePasswordResponse = User;
 
 const updatePassword = async (payload: UpdatePasswordDto) => {
-    const response = await api.put<UpdatePasswordResponse>(`/api/${VERSION}/auth/update-user`,{
+    const response = await api.put<UpdatePasswordResponse>(`/api/${VERSION}/auth/set-password`,{
         ...payload
     });
-
+    
     return response.data;
 }
 

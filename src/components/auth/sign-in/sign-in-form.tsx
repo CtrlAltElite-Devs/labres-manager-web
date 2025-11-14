@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth";
 import LoadingDots from "@/components/ui/loading-animation";
 import { toast } from "sonner";
+import { useIdentifyStep1 } from "@/services/auth/identify/identify-step1";
+import { IdentifyStatus } from "@/enums/index.enums";
 
 const pidForm = z.object({
     pid: z.string()
@@ -19,6 +21,7 @@ type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
     const { mutate: checkPid, isPending } = useCheckPidV1();
+    const {mutate: identifyStep1, isPending: isPendingIdentifyStep1} = useIdentifyStep1();
     const router = useRouter();
     const { setPid } = useAuthStore();
 
@@ -57,14 +60,42 @@ export default function SignInForm(){
         })
     }
 
+    const onSubmitV2 = (values: PidFormData ) => {
+        identifyStep1({...values }, {
+            onSuccess: (data) => {
+                const { status, message, payload } = data;
+                
+                if(status === IdentifyStatus.NOT_FOUND) {
+                    toast.error(message);
+                    return;
+                }
+
+                setPid(payload?.pid);
+
+                if(status === IdentifyStatus.NEEDS_ONBOARDING){
+                    toast.info(message);
+                    router.push("/onboarding");
+                    return;
+                }
+
+                if(status === IdentifyStatus.READY_TO_LOGIN){
+                    toast.success(message);
+                }
+            },
+            onError: () => {
+                toast.error("Sorry we cannot process your request right now.")
+            }
+        })
+    }
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmitV2)}>
             <Input
                 className="mb-6 h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full"
                 placeholder="Enter your PID"
                 {...register("pid")}
             />
-            {!isPending ? (
+            {!isPendingIdentifyStep1 ? (
                 <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full hover:cursor-pointer" disabled={!pid} >
                     Continue
                 </Button>
