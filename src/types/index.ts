@@ -7,6 +7,8 @@ export type LabResult = {
 }
 
 export type User = {
-  pid: string
-  dob: Date
+  pid: string,
+  lastName: string,
+  emailVerified: boolean,
+  dob: Date,
 }
