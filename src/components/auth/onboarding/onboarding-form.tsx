@@ -46,7 +46,6 @@ export default function OnboardingForm() {
 	});
 
 	const onSubmit = (data: OnboardingFormData) => {
-		console.log("data:", JSON.stringify(data, null, 2));
 		mutate(
 			{
 				pid: pid!,
@@ -55,7 +54,7 @@ export default function OnboardingForm() {
 			},
 			{
 				onSuccess: (data) => {
-                    const { status, message, payload } = data;
+                    const { status, message } = data;
 
                     if(status === IdentifyStatus.NOT_FOUND) {
                         toast.error(message);
@@ -64,12 +63,13 @@ export default function OnboardingForm() {
 
                     if(status === IdentifyStatus.NEEDS_EMAIL) {
                         toast.info(message);
-						router.push("/register-email")
+						router.replace("/register-email")
                         return;
                     }
 
                     if(status === IdentifyStatus.EMAIL_REGISTERED) {
                         toast.info(message);
+						router.replace("/verify-email")
                         return;
                     }
                 },

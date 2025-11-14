@@ -15,7 +15,7 @@ export type VerifyEmailResponse = {
 const version : ApiVersion = "v1";
 
 const verifyEmail = async (payload: VerifyEmailRequest) => {
-    const response = await api.post<VerifyEmailResponse>(`api/${version}/verify-email`, {
+    const response = await api.post<VerifyEmailResponse>(`api/${version}/auth/verify-email`, {
         ...payload
     });
 

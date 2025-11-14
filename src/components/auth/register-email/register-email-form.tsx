@@ -2,8 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LoadingDots from "@/components/ui/loading-animation";
 import { useSendVerificationEmail } from "@/services/auth/email/send-verification-email";
+import { useAuthStore } from "@/stores/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -16,6 +21,12 @@ type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;
 
 export default function RegisterEmailForm() {
 	const { mutate, isPending } = useSendVerificationEmail();
+	const { pid } = useAuthStore();
+	const router = useRouter();
+
+	useEffect(() => {
+		if (!pid) router.replace("/sign-in");
+	}, [pid, router]);
 
 	const {
 		register,
@@ -29,13 +40,22 @@ export default function RegisterEmailForm() {
 
 	const onSubmit = (data: EmailRegistrationData) => {
 		mutate(
-			{ email: data.email },
+			{ 
+				pid: pid!,
+				email: data.email 
+			},
 			{
-				onSuccess: (data) => {
-					toast.success(data.message);
+				onSuccess: (response) => {
+					toast.success(response.message);
+					sessionStorage.setItem("userEmail", data.email);
+					router.push("/verify-email");
 				},
 				onError: (error) => {
-					toast.error(error.message);
+					if(error instanceof AxiosError){
+						toast.error(error.response?.data.message);
+					} else {
+						toast.error(error.message);
+					}
 				},
 			}
 		);
@@ -55,18 +75,25 @@ export default function RegisterEmailForm() {
 					<p className="text-red-500 text-sm">{errors.email.message}</p>
 				)}
 			</div>
-
-			<Button
-				type="submit"
-				disabled={!isValid || isPending}
-				className={`h-12 rounded-full px-12 w-full transition-colors ${
-					isValid && !isPending
-						? "bg-primary text-on-primary"
-						: "bg-gray-300 text-white cursor-not-allowed"
-				}`}
-			>
-				Send Verification Code
-			</Button>
+			
+			{!isPending ? (
+				<Button
+					type="submit"
+					disabled={!isValid || isPending}
+					className={`h-12 rounded-full px-12 w-full transition-colors ${
+						isValid && !isPending
+							? "bg-primary text-on-primary"
+							: "bg-gray-300 text-white cursor-not-allowed"
+					}`}
+				>
+					Send Verification Code
+				</Button>
+			): 
+				<LoadingDots
+					className="text-on-primary"
+					size="md"
+				/>
+			}
 		</form>
 	);
 }

@@ -12,119 +12,138 @@ import { useUpdatePassword } from "@/services/auth/update-password/update-passwo
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 // Define schema
 const createPasswordForm = z
-  .object({
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+	.object({
+		password: z.string().min(6, "Password must be at least 6 characters"),
+		confirmPassword: z.string().min(6, "Confirm your password"),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
 
 type CreatePasswordFormData = z.infer<typeof createPasswordForm>;
 
 export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const { mutate, isPending } = useUpdatePassword();
-  const { pid } = useAuthStore();
-  const router = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
+	const { mutate, isPending } = useUpdatePassword();
+	const { pid } = useAuthStore();
+	const router = useRouter();
 
-  useEffect(() => {
-    if(!pid) router.replace("/sign-in");
-  }, [pid, router]);
+	useEffect(() => {
+		if (!pid) router.replace("/sign-in");
+	}, [pid, router]);
 
-  const { register, handleSubmit, formState: { errors, isValid }, } = useForm<CreatePasswordFormData>({
-    resolver: zodResolver(createPasswordForm),
-    mode: "onChange",
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-  });
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isValid },
+	} = useForm<CreatePasswordFormData>({
+		resolver: zodResolver(createPasswordForm),
+		mode: "onChange",
+		defaultValues: {
+			password: "",
+			confirmPassword: "",
+		},
+	});
 
-  const onSubmit = (data: CreatePasswordFormData) => {
-    console.log("✅ Password set:", data);
-    mutate({
-      pid: pid!,
-      password: data.password
-    }, {
-      onSuccess: () => {
-        router.replace("/password");
-      }
-    })
-  };
+	const onSubmit = (data: CreatePasswordFormData) => {
+		console.log("✅ Password set:", data);
+		mutate(
+			{
+				pid: pid!,
+				password: data.password,
+			},
+			{
+				onSuccess: () => {
+					router.replace("/password");
+				},
+        onError: (error) => {
+          if(error instanceof AxiosError){
+              console.log("entered here nasad")
+              if(error.status === 403){
+                toast.error(`Invalid Credentials`);
+                return;
+              }
+              if(error.status === 400){
+                toast.error(error.response?.data.message);
+                router.replace("/sign-in");
+                return;
+              }
+          }
+        }
+			}
+		);
+	};
 
-  const toggleShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+	const toggleShowPassword = () => {
+		setShowPassword((prev) => !prev);
+	};
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="sm:min-w-md mx-auto px-2">
+	return (
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="sm:min-w-md mx-auto px-2"
+		>
+			<div className="space-y-6 mb-8">
+				{/* Password */}
+				<div>
+					<Input
+						{...register("password")}
+						placeholder="Enter password"
+						type={showPassword ? "text" : "password"}
+						className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
+					/>
+					{errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+				</div>
 
-      <div className="space-y-6 mb-8">
-        {/* Password */}
-        <div>
-          <Input
-            {...register("password")}
-            placeholder="Enter password"
-            type={showPassword ? "text" : "password"}
-            className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+				{/* Confirm Password */}
+				<div>
+					<Input
+						{...register("confirmPassword")}
+						placeholder="Confirm your password"
+						type={showPassword ? "text" : "password"}
+						className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
+					/>
+					{errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
+				</div>
 
-        {/* Confirm Password */}
-        <div>
-          <Input
-            {...register("confirmPassword")}
-            placeholder="Confirm your password"
-            type={showPassword ? "text" : "password"}
-            className="h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full text-primary"
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
+				{/* Show Password Toggle */}
+				<div className="flex items-start gap-3 mb-4 ml-2">
+					<Checkbox
+						id="togglePassword"
+						className="text-on-primary border-primary"
+						onCheckedChange={toggleShowPassword}
+					/>
+					<Label
+						htmlFor="togglePassword"
+						className="text-gray-600"
+					>
+						Show Password
+					</Label>
+				</div>
+			</div>
 
-        {/* Show Password Toggle */}
-        <div className="flex items-start gap-3 mb-4 ml-2">
-          <Checkbox
-            id="togglePassword"
-            className="text-on-primary border-primary"
-            onCheckedChange={toggleShowPassword}
-          />
-          <Label htmlFor="togglePassword" className="text-gray-600">
-            Show Password
-          </Label>
-        </div>
-      </div>
-
-      {
-        !isPending ? (
-          <Button
-            type="submit"
-            disabled={!isValid}
-            className={`h-12 rounded-full px-12 w-full transition-colors ${
-              isValid
-                ? "bg-primary text-on-primary"
-                : "bg-gray-300 text-white cursor-not-allowed"
-            }`}
-          >
-            Continue
-          </Button>
-        ): (
-          <LoadingDots className="text-on-primary" size="md"/>
-        )
-      }
-    </form>
-  );
+			{!isPending ? (
+				<Button
+					type="submit"
+					disabled={!isValid}
+					className={`h-12 rounded-full px-12 w-full transition-colors ${
+						isValid ? "bg-primary text-on-primary" : "bg-gray-300 text-white cursor-not-allowed"
+					}`}
+				>
+					Continue
+				</Button>
+			) : (
+				<LoadingDots
+					className="text-on-primary"
+					size="md"
+				/>
+			)}
+		</form>
+	);
 }

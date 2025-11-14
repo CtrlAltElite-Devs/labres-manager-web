@@ -3,9 +3,7 @@ import { useAuthStore } from "@/stores/auth";
 import { ApiVersion } from "@/types/api-version";
 
 export const api = Axios.create({
-    // baseURL: "https://slabres.ctr3.org",
-    // baseURL: "https://kfsbqd92-3000.asse.devtunnels.ms",
-    baseURL: "http://localhost:5030",
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URI,
     withCredentials: true
 })
 
@@ -26,6 +24,13 @@ api.interceptors.response.use(
     async (error) => {
         const VERSION: ApiVersion = "v1";
         const originalRequest = error.config;
+
+        if (error.response?.status === 429) {
+            console.warn("Rate limit hit — logging out.");
+            useAuthStore.getState().clearAuth();
+            window.location.replace("/sign-in");
+            return Promise.reject(error);
+        }
 
         if (originalRequest.url.includes(`/api/${VERSION}/auth/refresh`)) {
             return Promise.reject(error);

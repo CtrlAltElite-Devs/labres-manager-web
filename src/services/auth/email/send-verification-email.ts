@@ -3,6 +3,7 @@ import { ApiVersion } from "@/types/api-version";
 import { useMutation } from "@tanstack/react-query";
 
 export type SendVerificationEmailRequest = {
+    pid: string;
     email: string;
 }
 
@@ -13,7 +14,7 @@ export type SendVerificationEmailResponse = {
 const version : ApiVersion = "v1";
 
 const sendVerificationEmail = async ( payload: SendVerificationEmailRequest) => {
-    const response = await api.post<SendVerificationEmailResponse>(`api/${version}/send-verification-email`, {
+    const response = await api.post<SendVerificationEmailResponse>(`api/${version}/auth/send-verification-email`, {
         ...payload
     });
 

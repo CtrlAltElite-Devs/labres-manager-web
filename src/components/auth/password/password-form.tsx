@@ -61,6 +61,10 @@ export default function PasswordForm() {
                         toast.error(`Invalid Credentials`);
                         return;
                     }
+                    if(error.status === 400){
+                        toast.error(error.message);
+                        return;
+                    }
                 }
                 toast.error("Sorry, we cannot process your request right now.")
             }

@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCheckPidV1 } from "@/services/auth/check-pid/check-pid-v1";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth";
 import LoadingDots from "@/components/ui/loading-animation";
@@ -20,7 +19,6 @@ const pidForm = z.object({
 type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
-    const { mutate: checkPid, isPending } = useCheckPidV1();
     const {mutate: identifyStep1, isPending: isPendingIdentifyStep1} = useIdentifyStep1();
     const router = useRouter();
     const { setPid } = useAuthStore();
@@ -36,31 +34,6 @@ export default function SignInForm(){
     const pid = watch("pid");
 
     const onSubmit = (values: PidFormData ) => {
-        checkPid({...values }, {
-            onSuccess: (data) => {
-                const { hasPassword, hasPid, pid } = data;
-                if(!hasPid){
-                    toast.error("Patient Identification Not Found")
-                    return;
-                }
-                
-                setPid(pid)
-
-                if(!hasPassword){
-                    router.replace("/register");
-                    return;
-                }
-
-                toast.success("Patient Identification Found");
-                router.replace("/password");
-            },
-            onError: () => {
-                toast.error("Sorry we cannot process your request right now.")
-            }
-        })
-    }
-
-    const onSubmitV2 = (values: PidFormData ) => {
         identifyStep1({...values }, {
             onSuccess: (data) => {
                 const { status, message, payload } = data;
@@ -80,6 +53,7 @@ export default function SignInForm(){
 
                 if(status === IdentifyStatus.READY_TO_LOGIN){
                     toast.success(message);
+                    router.replace("/password");
                 }
             },
             onError: () => {
@@ -89,7 +63,7 @@ export default function SignInForm(){
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmitV2)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <Input
                 className="mb-6 h-12 px-4 border border-primary focus:outline-none focus:border-primary-500 focus:ring-0 rounded-full"
                 placeholder="Enter your PID"
