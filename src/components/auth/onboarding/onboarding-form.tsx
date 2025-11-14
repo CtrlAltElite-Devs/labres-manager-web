@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LoadingDots from "@/components/ui/loading-animation";
 import { IdentifyStatus } from "@/enums/index.enums";
+import { useSendVerificationEmail } from "@/services/auth/email/send-verification-email";
 import { useIdentifyStep2 } from "@/services/auth/identify/identify-step2";
 import { useAuthStore } from "@/stores/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +25,7 @@ type OnboardingFormData = z.infer<typeof createOnboardingForm>;
 
 export default function OnboardingForm() {
 	const { mutate, isPending } = useIdentifyStep2();
+	const {mutate: sendVerification, isPending: isSendingVerification } = useSendVerificationEmail();
 	const { pid } = useAuthStore();
 	const router = useRouter();
 
@@ -69,8 +71,18 @@ export default function OnboardingForm() {
 
                     if(status === IdentifyStatus.EMAIL_REGISTERED) {
                         toast.info(message);
-						sessionStorage.setItem("userEmail", payload!.email);
-						router.replace("/verify-email")
+						sendVerification({
+							email: payload!.email,
+							pid: pid!
+						}, {
+							onSuccess: () => {
+								sessionStorage.setItem("userEmail", payload!.email);
+								router.replace("/verify-email")
+							},
+							onError: () => {
+								toast.error("Something went wrong, please try again later.")
+							}
+						})
                         return;
                     }
                 },
@@ -119,7 +131,7 @@ export default function OnboardingForm() {
 				{errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
 			</div>
 
-			{!isPending ? (
+			{!(isPending || isSendingVerification) ? (
 				<Button
 					type="submit"
 					disabled={!isValid}
