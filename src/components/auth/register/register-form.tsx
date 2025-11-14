@@ -52,7 +52,6 @@ export default function RegisterForm() {
 	});
 
 	const onSubmit = (data: CreatePasswordFormData) => {
-		console.log("✅ Password set:", data);
 		mutate(
 			{
 				pid: pid!,
@@ -60,6 +59,7 @@ export default function RegisterForm() {
 			},
 			{
 				onSuccess: () => {
+					sessionStorage.removeItem("userEmail");
 					router.replace("/password");
 				},
         onError: (error) => {

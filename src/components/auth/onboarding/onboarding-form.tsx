@@ -54,7 +54,7 @@ export default function OnboardingForm() {
 			},
 			{
 				onSuccess: (data) => {
-                    const { status, message } = data;
+                    const { status, message, payload } = data;
 
                     if(status === IdentifyStatus.NOT_FOUND) {
                         toast.error(message);
@@ -69,6 +69,7 @@ export default function OnboardingForm() {
 
                     if(status === IdentifyStatus.EMAIL_REGISTERED) {
                         toast.info(message);
+						sessionStorage.setItem("userEmail", payload!.email);
 						router.replace("/verify-email")
                         return;
                     }
