@@ -5,7 +5,7 @@ import { ApiVersion } from "@/types/api-version";
 export const api = Axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URI,
     withCredentials: true
-})
+});
 
 api.interceptors.request.use(
     (config) => {
@@ -38,12 +38,18 @@ api.interceptors.response.use(
 
         if (error.response?.status === 401) {
             try {
-                const response = await api.post(
-                    `/api/${VERSION}/auth/refresh?useCookie=true`,
-                    {}
+                const response = await api.post<{token: string, refreshToken: string}>(
+                    `/api/${VERSION}/auth/refresh?useCookie=false`,
+                    {
+                        refreshToken: useAuthStore.getState().auth?.refreshToken
+                    }
                 );
 
                 if (response.status === 201) {
+                    useAuthStore.getState().setTokens({
+                        token: response.data.token,
+                        refreshToken: response.data.refreshToken
+                    })
                     const originalResponse = await api(originalRequest);
                     return originalResponse;
                 } else {

@@ -1,28 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { ValidateToken } from "./lib/validate-token";
+import { ZustandCookieParser } from "./lib/zustand-cookie-parser";
 
-const protectedRoutes = ['/dashboard', '/profile', '/settings'];
+const protectedRoutes = ["/dashboard", "/profile", "/settings"];
 const authRoutes = ["/sign-in", "/password", "/register"];
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
-  const isLoggedIn = Boolean(token);
+export async function middleware(request: NextRequest) {
+	const cookies = request.cookies.getAll();
+	const accessToken = ZustandCookieParser.extractFromCookies(cookies, "auth-user", "token").value;
+	const isLoggedIn = await ValidateToken(accessToken);
 
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
-  );
+	const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
 
-  if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL('/sign-in', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
+	if (isProtectedRoute && !isLoggedIn) {
+		const loginUrl = new URL("/sign-in", request.url);
+		return NextResponse.redirect(loginUrl);
+	}
 
-  if(isAuthenticationPath(request.nextUrl.pathname) && isLoggedIn){
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+	if (isAuthenticationPath(request.nextUrl.pathname) && isLoggedIn) {
+		return NextResponse.redirect(new URL("/dashboard", request.url));
+	}
 
-  return NextResponse.next();
+	return NextResponse.next();
 }
 
-function isAuthenticationPath(pathname: string) : boolean{
-  return authRoutes.some(route => pathname.startsWith(route));
+function isAuthenticationPath(pathname: string): boolean {
+	return authRoutes.some((route) => pathname.startsWith(route));
 }

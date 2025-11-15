@@ -1,28 +1,24 @@
-import { User } from "@/types"
-import { api } from "@/lib/axios"
+import { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
-import { ApiVersion } from "@/types/api-version";
-
-const VERSION : ApiVersion = "v2";
+import { api } from "@/lib/axios";
 
 export type LoginDto = {
-    pid: string;
-    password: string;
-}
+	pid: string;
+	password: string;
+};
 
 export type LoginResponseDto = {
-    user: User,
-    token: string
-}
-
+	user: User;
+	token: string;
+	refreshToken: string;
+};
 
 const loginUser = async (payload: LoginDto) => {
-    const response = await api.post<LoginResponseDto>(`/api/${VERSION}/auth/login?useCookie=true`, {
-        ...payload
-    });
-    return response.data;
-}
+    const response = await api.post<LoginResponseDto>("/api/v2/auth/login?useCookie=false", {...payload})
+	return response.data;
+};
 
-export const useLoginUser = () => useMutation({
-    mutationFn: loginUser
-})
+export const useLoginUser = () =>
+	useMutation({
+		mutationFn: loginUser,
+	});
