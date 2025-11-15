@@ -46,13 +46,13 @@ export default function SignInForm(){
                 setPid(payload?.pid);
 
                 if(status === IdentifyStatus.NEEDS_ONBOARDING){
-                    toast.info(message);
+                    // toast.info(message);
                     router.push("/onboarding");
                     return;
                 }
 
                 if(status === IdentifyStatus.READY_TO_LOGIN){
-                    toast.success(message);
+                    // toast.success(message);
                     router.replace("/password");
                 }
             },

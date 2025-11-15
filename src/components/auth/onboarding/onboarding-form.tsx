@@ -64,13 +64,13 @@ export default function OnboardingForm() {
                     }
 
                     if(status === IdentifyStatus.NEEDS_EMAIL) {
-                        toast.info(message);
+                        // toast.info(message);
 						router.replace("/register-email")
                         return;
                     }
 
                     if(status === IdentifyStatus.EMAIL_REGISTERED) {
-                        toast.info(message);
+                        // toast.info(message);
 						sendVerification({
 							email: payload!.email,
 							pid: pid!

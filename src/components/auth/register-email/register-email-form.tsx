@@ -45,8 +45,8 @@ export default function RegisterEmailForm() {
 				email: data.email 
 			},
 			{
-				onSuccess: (response) => {
-					toast.success(response.message);
+				onSuccess: () => {
+					// toast.success(response.message);
 					sessionStorage.setItem("userEmail", data.email);
 					router.push("/verify-email");
 				},
