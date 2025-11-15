@@ -71,7 +71,7 @@ function LabResultRow({result, handleViewPdf}: LabResultRowProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => alert(`Download report for ${result.id}`)}
+          onClick={() => alert(`This feature is under construction`)}
           className="gap-2 mr-3"
         >
           <Download className="h-4 w-4" />

@@ -1,28 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { ValidateToken } from "./lib/validate-token";
+import { ZustandCookieParser } from "./lib/zustand-cookie-parser";
 
-const protectedRoutes = ['/dashboard', '/profile', '/settings'];
+const protectedRoutes = ["/dashboard", "/profile", "/settings"];
 const authRoutes = ["/sign-in", "/password", "/register"];
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
-  const isLoggedIn = Boolean(token);
+export async function middleware(request: NextRequest) {
+	const { pathname } = request.nextUrl;
 
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
-  );
+	if (
+		pathname.startsWith("/_next") ||
+		pathname.startsWith("/favicon") ||
+		pathname.startsWith("/robots") ||
+		pathname.startsWith("/sitemap") ||
+		pathname.includes(".")
+	) {
+		return;
+	}
+	console.log("Middleware:", request.nextUrl.pathname);
+	const cookies = request.cookies.getAll();
+	const accessToken = ZustandCookieParser.parseToken(cookies);
+	const isLoggedIn = await ValidateToken(accessToken);
 
-  if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL('/sign-in', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
+	const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route));
 
-  if(isAuthenticationPath(request.nextUrl.pathname) && isLoggedIn){
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+	if (isProtectedRoute && !isLoggedIn) {
+		const loginUrl = new URL("/sign-in", request.url);
+		return NextResponse.redirect(loginUrl);
+	}
 
-  return NextResponse.next();
+	if (isAuthenticationPath(request.nextUrl.pathname) && isLoggedIn) {
+		return NextResponse.redirect(new URL("/dashboard", request.url));
+	}
+
+	return NextResponse.next();
 }
 
-function isAuthenticationPath(pathname: string) : boolean{
-  return authRoutes.some(route => pathname.startsWith(route));
+function isAuthenticationPath(pathname: string): boolean {
+	return authRoutes.some((route) => pathname.startsWith(route));
 }

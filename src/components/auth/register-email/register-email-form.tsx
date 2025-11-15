@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LoadingDots from "@/components/ui/loading-animation";
 import { useSendVerificationEmail } from "@/services/auth/email/send-verification-email";
-import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;
 
 export default function RegisterEmailForm() {
 	const { mutate, isPending } = useSendVerificationEmail();
-	const { pid } = useAuthStore();
+	const { pid } = useUserStore();
 	const router = useRouter();
 
 	useEffect(() => {
