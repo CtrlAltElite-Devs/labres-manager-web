@@ -19,7 +19,7 @@ const pidForm = z.object({
 type PidFormData = z.infer<typeof pidForm>;
 
 export default function SignInForm(){
-    const {mutate: identifyStep1, isPending: isPendingIdentifyStep1} = useIdentifyStep1();
+    const {mutate: identifyStep1, isPending: isPendingIdentifyStep1, isSuccess} = useIdentifyStep1();
     const router = useRouter();
     // const { setPid } = useAuthStore();
     const { setPid } = useUserStore();
@@ -71,7 +71,7 @@ export default function SignInForm(){
                 placeholder="Enter your PID"
                 {...register("pid")}
             />
-            {!isPendingIdentifyStep1 ? (
+            {(!isPendingIdentifyStep1 || isSuccess) ? (
                 <Button type="submit" className="bg-primary text-on-primary h-12 rounded-full px-12 w-full hover:cursor-pointer" disabled={!pid} >
                     Continue
                 </Button>
