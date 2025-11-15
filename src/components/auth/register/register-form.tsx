@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdatePassword } from "@/services/auth/update-password/update-password-v1";
-import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { useUserStore } from "@/stores/user";
 
 // Define schema
 const createPasswordForm = z
@@ -31,7 +31,7 @@ type CreatePasswordFormData = z.infer<typeof createPasswordForm>;
 export default function RegisterForm() {
 	const [showPassword, setShowPassword] = useState(false);
 	const { mutate, isPending } = useUpdatePassword();
-	const { pid } = useAuthStore();
+	const { pid } = useUserStore();
 	const router = useRouter();
 
 	useEffect(() => {

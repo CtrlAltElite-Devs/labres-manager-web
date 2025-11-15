@@ -8,7 +8,7 @@ import LoadingDots from "@/components/ui/loading-animation";
 import { IdentifyStatus } from "@/enums/index.enums";
 import { useSendVerificationEmail } from "@/services/auth/email/send-verification-email";
 import { useIdentifyStep2 } from "@/services/auth/identify/identify-step2";
-import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -26,7 +26,7 @@ type OnboardingFormData = z.infer<typeof createOnboardingForm>;
 export default function OnboardingForm() {
 	const { mutate, isPending } = useIdentifyStep2();
 	const {mutate: sendVerification, isPending: isSendingVerification } = useSendVerificationEmail();
-	const { pid } = useAuthStore();
+	const { pid } = useUserStore();
 	const router = useRouter();
 
 	useEffect(() => {

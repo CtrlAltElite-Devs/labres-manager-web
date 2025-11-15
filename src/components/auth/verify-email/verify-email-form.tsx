@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useVerifyEmail } from "@/services/auth/email/verify-email";
-import { useAuthStore } from "@/stores/auth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
+import { useUserStore } from "@/stores/user";
 
 const FormSchema = z.object({
 	code: z.string().min(4, {
@@ -24,7 +24,7 @@ export function VerifyEmailForm() {
 	const { mutate, isPending } = useVerifyEmail();
 	const [email, setEmail] = useState("");
     const router = useRouter()
-	const { pid } = useAuthStore();
+	const { pid } = useUserStore();
 
     useEffect(() => {
 		if (!pid) router.replace("/sign-in");

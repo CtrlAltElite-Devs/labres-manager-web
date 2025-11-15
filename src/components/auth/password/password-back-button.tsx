@@ -2,15 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/auth";
-
+import { useUserStore } from "@/stores/user";
 
 export default function PasswordBackButton() {
     const router = useRouter();
-    const { setPid } = useAuthStore();
+    const { clearUserData } = useUserStore();
 
     const handleBackToSignIn = () => {
-        setPid(undefined);
+        clearUserData()
         router.replace("/sign-in");
     }
 

@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/auth";
 import LoadingDots from "@/components/ui/loading-animation";
 import { toast } from "sonner";
 import { useIdentifyStep1 } from "@/services/auth/identify/identify-step1";
 import { IdentifyStatus } from "@/enums/index.enums";
+import { useUserStore } from "@/stores/user";
 
 const pidForm = z.object({
     pid: z.string()
@@ -21,7 +21,8 @@ type PidFormData = z.infer<typeof pidForm>;
 export default function SignInForm(){
     const {mutate: identifyStep1, isPending: isPendingIdentifyStep1} = useIdentifyStep1();
     const router = useRouter();
-    const { setPid } = useAuthStore();
+    // const { setPid } = useAuthStore();
+    const { setPid } = useUserStore();
 
 
     const { handleSubmit, watch, register } = useForm<PidFormData>({
@@ -43,7 +44,7 @@ export default function SignInForm(){
                     return;
                 }
 
-                setPid(payload?.pid);
+                setPid(payload!.pid);
 
                 if(status === IdentifyStatus.NEEDS_ONBOARDING){
                     // toast.info(message);
@@ -56,7 +57,8 @@ export default function SignInForm(){
                     router.replace("/password");
                 }
             },
-            onError: () => {
+            onError: (err) => {
+                console.error(err);
                 toast.error("Sorry we cannot process your request right now.")
             }
         })

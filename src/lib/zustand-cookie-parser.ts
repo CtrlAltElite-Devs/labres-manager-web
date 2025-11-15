@@ -3,14 +3,23 @@
  * Example: "admin-auth-token|state|accessToken:array" -> extracts the actual token
  */
 
-// import { ca } from "date-fns/locale";
-// import { cookies } from "next/headers";
-
 interface ZustandCookieData {
 	state?: {
 		accessToken?: string;
 		// ..
 	};
+}
+
+interface ZustandParsedTokenData {
+	state? : {
+		token? : string;
+	}
+}
+
+interface ZustandParsedRefreshTokenData {
+	state? : {
+		refreshToken? : string;
+	}
 }
 
 export type ZustandCookieParsedData = {
@@ -19,41 +28,64 @@ export type ZustandCookieParsedData = {
 };
 
 export class ZustandCookieParser {
-	private static readonly COOKIE_PREFIX = "admin-auth-token";
 
-	/**
-	 * Extract token from zustand cookie in middleware (Edge Runtime)
-	 */
-	static parseFromRequest(cookies: { name: string; value: string }[]): string | null {
+
+	static parseToken(cookies: {name: string; value: string}[]) : string | null {
 		try {
-			const authCookie = cookies.find((cookie) => cookie.name.startsWith(this.COOKIE_PREFIX));
-
-			if (!authCookie) return null;
-
-			return this.extractTokenFromZustandFormat(authCookie.value);
-		} catch (error) {
+			const token = cookies.find(cookie => cookie.name.startsWith("token-store"));
+			if(!token) return null;
+			const parsed: ZustandParsedTokenData = JSON.parse(token.value);
+			return parsed.state?.token || null;
+		} catch(error) {
 			console.error("Error parsing zustand cookie in middleware:", error);
 			return null;
 		}
 	}
 
-	static extractFromCookies(cookies: { name: string; value: string }[], key: string, property: string): ZustandCookieParsedData {
+	static parseRefreshToken(cookies: {name: string; value: string}[]) : string | null {
 		try {
-			const foundCookie = cookies.find((cookie) => cookie.name.startsWith(key) && cookie.name.endsWith(property));
-			if (!foundCookie) return {
-				name: "",
-				value: ""
-			};
+			const token = cookies.find(cookie => cookie.name.startsWith("refresh-token-store"));
+			if(!token) return null;
+			const parsed: ZustandParsedRefreshTokenData = JSON.parse(token.value);
+			return parsed.state?.refreshToken || null;
+		} catch(error) {
+			console.error("Error parsing zustand cookie in middleware:", error);
+			return null;
+		}
+	}
+
+	static extractRefreshToken(cookies: { name: string; value: string }[]) {
+		try {
+			const foundCookie = cookies.find((cookie) => cookie.name.endsWith("refreshToken"));
+			console.log("EXTRACT REFRESH TOKEN", foundCookie);
+			if (!foundCookie) return { name: "", value: "" };
+
 			return {
 				name: foundCookie.name,
 				value: foundCookie.value,
 			};
 		} catch (error) {
 			console.error("Error parsing zustand cookie in middleware:", error);
+			return { name: "", value: "" };
+		}
+	}
+
+	static extractFromCookies(cookies: { name: string; value: string }[], key: string, property: string): ZustandCookieParsedData {
+		try {
+			const foundCookie = cookies.find((cookie) => {
+				const decoded = decodeURIComponent(cookie.name);
+				return decoded.startsWith(key) && decoded.endsWith(property);
+			});
+
+			if (!foundCookie) return { name: "", value: "" };
+
 			return {
-				name: "",
-				value: ""
+				name: foundCookie.name,
+				value: foundCookie.value,
 			};
+		} catch (error) {
+			console.error("Error parsing zustand cookie in middleware:", error);
+			return { name: "", value: "" };
 		}
 	}
 

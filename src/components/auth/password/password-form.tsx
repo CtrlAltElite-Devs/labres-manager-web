@@ -9,11 +9,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginUser } from "@/services/auth/login-user/login-user-v2";
-import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "next/navigation";
 import LoadingDots from "@/components/ui/loading-animation";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { useUserStore } from "@/stores/user";
+import { useTokensStoreHook } from "@/stores/tokens";
+
 
 const passwordForm = z.object({
   pid: z.string().nonempty("PID is required"),
@@ -25,7 +27,8 @@ type PasswordFormData = z.infer<typeof passwordForm>;
 export default function PasswordForm() {
     const [showPassword, setShowPassword] = useState(false);
     const { mutate, isPending, isSuccess } = useLoginUser();
-    const { pid, setAuth } = useAuthStore();
+    const { pid, setUser} = useUserStore();
+    const { setTokens } = useTokensStoreHook();
     const router = useRouter();
 
     useEffect(() => {
@@ -51,7 +54,9 @@ export default function PasswordForm() {
             ...payload
         }, {
             onSuccess: (data) => {
-                setAuth(data);
+                const {token, refreshToken, user } = data;
+                setUser(user);
+                setTokens(token, refreshToken);
                 router.replace("/dashboard");
                 toast.success("Successfully logged in.");
             },
